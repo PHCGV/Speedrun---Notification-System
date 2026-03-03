@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Notificações</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Tela de Login -->
+  <div id="loginScreen" class="screen active">
+    <div class="login-container">
+      <div class="login-header">
+        <h1>Sistema de Notificações</h1>
+        <p class="subtitle">Comunicação em Tempo Real</p>
+      </div>
+      
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="loginUsername">Usuário:</label>
+          <input type="text" id="loginUsername" name="username" required placeholder="Digite seu usuário">
+        </div>
+        
+        <div class="form-group">
+          <label for="loginPassword">Senha:</label>
+          <input type="password" id="loginPassword" name="password" required placeholder="Digite sua senha">
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-large">Entrar</button>
+        </div>
+
+        <div class="form-group text-center">
+          <p>Não tem conta? <a href="#" id="toggleRegister">Criar uma agora</a></p>
+        </div>
+      </form>
+
+      <div id="registerForm" class="login-form" style="display: none;">
+        <h2>Criar Conta</h2>
+        <form id="signupForm">
+          <div class="form-group">
+            <label for="signupUsername">Usuário:</label>
+            <input type="text" id="signupUsername" name="username" required placeholder="Escolha um usuário">
+          </div>
+          
+          <div class="form-group">
+            <label for="signupEmail">Email:</label>
+            <input type="email" id="signupEmail" name="email" required placeholder="seu@email.com">
+          </div>
+          
+          <div class="form-group">
+            <label for="signupPassword">Senha:</label>
+            <input type="password" id="signupPassword" name="password" required placeholder="Mínimo 6 caracteres">
+          </div>
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-large">Criar Conta</button>
+          </div>
+
+          <div class="form-group text-center">
+            <p><a href="#" id="toggleLogin">Voltar ao login</a></p>
+          </div>
+        </form>
+      </div>
+
+      <div id="loginError" class="alert alert-error" style="display: none;"></div>
+
+      <!-- Usuários de Demo -->
+      <div class="demo-users">
+        <p class="text-muted">Usuários de demo:</p>
+        <button type="button" class="btn btn-secondary demo-btn" data-user="admin" data-pass="admin123">
+          Admin / admin123
+        </button>
+        <button type="button" class="btn btn-secondary demo-btn" data-user="user1" data-pass="user123">
+          User1 / user123
+        </button>
+        <button type="button" class="btn btn-secondary demo-btn" data-user="user2" data-pass="user123">
+          User2 / user123
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tela Principal (Aplicação) -->
+  <div id="appScreen" class="screen">
+    <div class="app-container">
+      <!-- Sidebar Esquerda -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2 id="userGreeting">Olá</h2>
+          <p id="userRole" class="user-role">Usuário</p>
+          <div class="status-indicator">
+            <span class="status-dot online"></span>
+            Online
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="nav-item active" data-view="notifications">
+            <span class="icon">📬</span>
+            Notificações
+            <span id="notificationCount" class="badge" style="display: none;">0</span>
+          </button>
+          <button class="nav-item" data-view="send">
+            <span class="icon">✉️</span>
+            Enviar
+          </button>
+          <button class="nav-item" data-view="history">
+            <span class="icon">📋</span>
+            Histórico
+          </button>
+          <button class="nav-item" data-view="settings">
+            <span class="icon">⚙️</span>
+            Configurações
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <button id="logoutBtn" class="btn btn-danger btn-block">
+            Sair
+          </button>
+        </div>
+      </aside>
+
+      <!-- Área Principal -->
+      <main class="main-content">
+        <!-- Notificações -->
+        <div id="notificationsView" class="view active">
+          <div class="view-header">
+            <h1>Notificações</h1>
+            <button id="markAllReadBtn" class="btn btn-small">Marcar tudo como lido</button>
+          </div>
+          
+          <div id="notificationsList" class="notifications-list">
+            <p class="empty-state">🔔 Nenhuma notificação</p>
+          </div>
+
+          <div id="notificationsLoading" class="loading" style="display: none;">
+            <p>Carregando...</p>
+          </div>
+        </div>
+
+        <!-- Enviar Notificação -->
+        <div id="sendView" class="view">
+          <div class="view-header">
+            <h1>Enviar Notificação</h1>
+          </div>
+          
+          <form id="sendNotificationForm" class="form-panel">
+            <div class="form-group">
+              <label for="recipientUsername">Para (usuário):</label>
+              <input type="text" id="recipientUsername" required placeholder="Nome do usuário destinatário">
+              <small class="form-hint">Digite o nome de usuário do destinatário</small>
+            </div>
+
+            <div class="form-group">
+              <label for="notificationTitle">Assunto:</label>
+              <input type="text" id="notificationTitle" required placeholder="Assunto da notificação" maxlength="255">
+            </div>
+
+            <div class="form-group">
+              <label for="notificationMessage">Mensagem:</label>
+              <textarea id="notificationMessage" required placeholder="Escreva sua mensagem aqui..." maxlength="5000" rows="6"></textarea>
+              <small class="form-hint">Máximo 5000 caracteres</small>
+            </div>
+
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-large">Enviar Notificação</button>
+            </div>
+
+            <div id="sendError" class="alert alert-error" style="display: none;"></div>
+            <div id="sendSuccess" class="alert alert-success" style="display: none;"></div>
+          </form>
+        </div>
+
+        <!-- Histórico -->
+        <div id="historyView" class="view">
+          <div class="view-header">
+            <h1>Histórico de Conversa</h1>
+          </div>
+
+          <div class="form-panel" style="margin-bottom: 20px;">
+            <div class="form-group">
+              <label for="historyUsername">Conversa com:</label>
+              <input type="text" id="historyUsername" placeholder="Digite o nome do usuário">
+              <button type="button" id="loadHistoryBtn" class="btn btn-primary" style="margin-top: 10px;">Carregar Histórico</button>
+            </div>
+          </div>
+
+          <div id="historyList" class="notifications-list">
+            <p class="empty-state">📋 Selecione um usuário para ver o histórico</p>
+          </div>
+        </div>
+
+        <!-- Configurações -->
+        <div id="settingsView" class="view">
+          <div class="view-header">
+            <h1>Configurações</h1>
+          </div>
+
+          <div class="form-panel">
+            <h3>Som de Notificação</h3>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="soundEnabled" checked>
+                Tocar som ao receber notificação
+              </label>
+            </div>
+            <button type="button" id="testSoundBtn" class="btn btn-secondary">Testar Som</button>
+
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #ccc;">
+
+            <h3>Notificações do Navegador</h3>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="notificationEnabled" checked>
+                Mostrar notificações do navegador
+              </label>
+            </div>
+            <button type="button" id="enableNotificationsBtn" class="btn btn-secondary">Pedir Permissão</button>
+
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #ccc;">
+
+            <h3>Informações da Conta</h3>
+            <div class="info-panel">
+              <p><strong>Usuário:</strong> <span id="settingsUsername">-</span></p>
+              <p><strong>Email:</strong> <span id="settingsEmail">-</span></p>
+              <p><strong>Função:</strong> <span id="settingsRole">-</span></p>
+              <p><strong>Membro desde:</strong> <span id="settingsCreatedAt">-</span></p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Notificação Toast (canto superior direito) -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/socket.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

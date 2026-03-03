@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  notification-system:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: notification-system
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET:-seu_secret_jwt_aqui_mude_em_producao_123456789}
+      - JWT_EXPIRY=7d
+      - DB_PATH=/app/database/notifications.db
+      - TRANSLATION_API=https://api.mymemory.translated.net/get
+    volumes:
+      - ./database:/app/database
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
